@@ -2,7 +2,7 @@
  * Thin HTTP client that forwards JSON to the AnchorID REST API.
  *
  * Reads configuration from environment variables:
- *   ANCHORD_API_BASE_URL  – e.g. http://localhost:8000  (default)
+ *   ANCHORD_API_BASE_URL  – defaults to https://api.anchord.ai
  *   ANCHORD_API_KEY       – the Bearer token (required)
  *
  * No business logic lives here — just HTTP plumbing.
@@ -36,7 +36,7 @@ export class ApiClient {
   private readonly apiKey: string;
 
   constructor() {
-    this.baseUrl = (process.env.ANCHORD_API_BASE_URL ?? "http://localhost:8000").replace(
+    this.baseUrl = (process.env.ANCHORD_API_BASE_URL ?? "https://api.anchord.ai").replace(
       /\/$/,
       "",
     );
