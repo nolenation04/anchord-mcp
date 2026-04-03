@@ -1,0 +1,15 @@
+# Exclude everything not needed in the npm package
+docs/
+examples/
+scripts/
+src/
+Dockerfile
+docker-compose.yml
+smithery.yaml
+server.json
+CONTRIBUTING.md
+CHANGELOG.md
+tsconfig.json
+.gitignore
+*.tsbuildinfo
+__tests__/

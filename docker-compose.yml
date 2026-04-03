@@ -1,0 +1,12 @@
+# Local MCP server testing via Docker.
+# This runs the Anchord MCP server — a thin proxy to the hosted Anchord API.
+# It does NOT run the Anchord platform itself.
+
+services:
+  anchord-mcp:
+    build: .
+    stdin_open: true
+    tty: true
+    environment:
+      - ANCHORD_API_KEY=${ANCHORD_API_KEY:?Set ANCHORD_API_KEY in .env or environment}
+      - ANCHORD_API_BASE_URL=${ANCHORD_API_BASE_URL:-https://api.anchord.ai}

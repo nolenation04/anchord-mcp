@@ -1,0 +1,62 @@
+{
+  "name": "@anchord/mcp-server",
+  "version": "1.0.0",
+  "description": "MCP server for Anchord — identity resolution and pre-write safety checks for AI agents. Read-only. Backed by the hosted Anchord API.",
+  "type": "module",
+  "main": "dist/index.js",
+  "bin": {
+    "anchord-mcp": "dist/index.js"
+  },
+  "files": [
+    "dist",
+    "LICENSE",
+    "README.md"
+  ],
+  "scripts": {
+    "build": "tsc",
+    "start": "node dist/index.js",
+    "dev": "tsx src/index.ts",
+    "test": "node --import tsx/esm --test src/__tests__/*.test.ts",
+    "typecheck": "tsc --noEmit",
+    "prepublishOnly": "npm run build"
+  },
+  "keywords": [
+    "mcp",
+    "mcp-server",
+    "model-context-protocol",
+    "anchord",
+    "anchorid",
+    "identity-resolution",
+    "crm",
+    "ai-agents",
+    "salesforce",
+    "hubspot",
+    "stripe",
+    "guard",
+    "deduplication",
+    "read-only"
+  ],
+  "mcpName": "io.github.nolenation04/anchord",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/nolenation04/anchord-mcp.git"
+  },
+  "homepage": "https://www.anchord.ai",
+  "bugs": {
+    "url": "https://github.com/nolenation04/anchord-mcp/issues"
+  },
+  "license": "MIT",
+  "author": "Anchord <support@anchord.ai> (https://www.anchord.ai)",
+  "dependencies": {
+    "@modelcontextprotocol/sdk": "^1.26.0",
+    "zod": "^3.25.0"
+  },
+  "devDependencies": {
+    "@types/node": "^22.0.0",
+    "tsx": "^4.19.0",
+    "typescript": "^5.7.0"
+  },
+  "engines": {
+    "node": ">=20.0.0"
+  }
+}

@@ -1,0 +1,28 @@
+# Smithery configuration for @anchord/mcp-server
+# https://smithery.ai/docs/build/publish
+
+startCommand:
+  type: stdio
+  configSchema:
+    type: object
+    properties:
+      anchordApiKey:
+        type: string
+        title: Anchord API Key
+        description: Your Anchord API key. Get one at https://app.anchord.ai/signup
+      anchordApiBaseUrl:
+        type: string
+        title: API Base URL
+        description: Anchord API base URL
+        default: https://api.anchord.ai
+    required:
+      - anchordApiKey
+  commandFunction: |-
+    (config) => ({
+      command: 'npx',
+      args: ['-y', '@anchord/mcp-server'],
+      env: {
+        ANCHORD_API_KEY: config.anchordApiKey,
+        ANCHORD_API_BASE_URL: config.anchordApiBaseUrl || 'https://api.anchord.ai'
+      }
+    })
