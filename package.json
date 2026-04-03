@@ -39,7 +39,7 @@
   "mcpName": "io.github.nolenation04/anchord",
   "repository": {
     "type": "git",
-    "url": "https://github.com/nolenation04/anchord-mcp.git"
+    "url": "git+https://github.com/nolenation04/anchord-mcp.git"
   },
   "homepage": "https://www.anchord.ai",
   "bugs": {
