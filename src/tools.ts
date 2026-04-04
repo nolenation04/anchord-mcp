@@ -12,7 +12,7 @@
  */
 import { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
 import { z } from "zod";
-import { ApiClient, ApiError } from "./api-client.js";
+import { ApiClient, ApiClientOpts, ApiError } from "./api-client.js";
 
 /** Format the API response as MCP tool content. */
 function jsonContent(data: unknown) {
@@ -41,8 +41,8 @@ function errorContent(err: unknown) {
   };
 }
 
-export function registerTools(server: McpServer): void {
-  const api = new ApiClient();
+export function registerTools(server: McpServer, client?: ApiClient): void {
+  const api = client ?? new ApiClient();
 
   // ─── 1. resolve_company ──────────────────────────────────────────
   server.tool(
@@ -293,7 +293,7 @@ export function registerTools(server: McpServer): void {
   server.tool(
     "guard_write",
     "Evaluation-only pre-write safety check. Verifies the AnchorID exists, " +
-      "confidence meets threshold, no unresolved conflicts, and exactly one " +
+      "confidence meets threshold, no unresolved conflicts, and at least one " +
       "canonical link is present. Returns allowed/blocked with reasons. " +
       "This tool does NOT perform any write — the caller decides whether to proceed.",
     {
@@ -303,7 +303,7 @@ export function registerTools(server: McpServer): void {
         .min(0)
         .max(1)
         .optional()
-        .describe("Minimum confidence threshold (default: 0.8)"),
+        .describe("Minimum confidence threshold (default: 0.70)"),
       require_no_conflicts: z
         .boolean()
         .optional()

@@ -29,5 +29,12 @@
         }
       ]
     }
+  ],
+  "remotes": [
+    {
+      "transportType": "streamable-http",
+      "url": "https://mcp.anchord.ai/mcp",
+      "authorizationHeader": "Bearer <ANCHORD_API_KEY>"
+    }
   ]
 }

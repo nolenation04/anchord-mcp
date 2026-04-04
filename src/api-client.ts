@@ -1,9 +1,12 @@
 /**
  * Thin HTTP client that forwards JSON to the AnchorID REST API.
  *
- * Reads configuration from environment variables:
- *   ANCHORD_API_BASE_URL  – defaults to https://api.anchord.ai
- *   ANCHORD_API_KEY       – the Bearer token (required)
+ * Configuration sources (in priority order):
+ *   1. Constructor opts  – { apiKey, baseUrl } for per-request usage (remote mode)
+ *   2. Environment vars  – ANCHORD_API_KEY, ANCHORD_API_BASE_URL (stdio mode)
+ *
+ * ANCHORD_API_BASE_URL defaults to https://api.anchord.ai when neither
+ * constructor opt nor env var is set.
  *
  * No business logic lives here — just HTTP plumbing.
  */
@@ -31,21 +34,26 @@ export class ApiError extends Error {
   }
 }
 
+export interface ApiClientOpts {
+  apiKey?: string;
+  baseUrl?: string;
+}
+
 export class ApiClient {
   private readonly baseUrl: string;
   private readonly apiKey: string;
 
-  constructor() {
-    this.baseUrl = (process.env.ANCHORD_API_BASE_URL ?? "https://api.anchord.ai").replace(
+  constructor(opts?: ApiClientOpts) {
+    this.baseUrl = (opts?.baseUrl ?? process.env.ANCHORD_API_BASE_URL ?? "https://api.anchord.ai").replace(
       /\/$/,
       "",
     );
-    this.apiKey = process.env.ANCHORD_API_KEY ?? "";
+    this.apiKey = opts?.apiKey ?? process.env.ANCHORD_API_KEY ?? "";
 
     if (!this.apiKey) {
       throw new Error(
-        "ANCHORD_API_KEY environment variable is required. " +
-          "Set it to a valid API key for the AnchorID API.",
+        "ANCHORD_API_KEY is required. Pass it via constructor opts " +
+          "or set the ANCHORD_API_KEY environment variable.",
       );
     }
   }

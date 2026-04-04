@@ -10,7 +10,7 @@
  *   ANCHORD_API_KEY       – Bearer token for the REST API
  *
  * Optional:
- *   ANCHORD_API_BASE_URL  – defaults to http://localhost:8000
+ *   ANCHORD_API_BASE_URL  – defaults to https://api.anchord.ai
  */
 import { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
 import { StdioServerTransport } from "@modelcontextprotocol/sdk/server/stdio.js";

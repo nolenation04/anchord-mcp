@@ -300,6 +300,111 @@ describe("ApiClient", () => {
     );
   });
 
+  // ── Constructor opts (per-request auth) ──────────────────────────
+
+  describe("constructor opts", () => {
+    it("uses explicit apiKey and baseUrl, ignoring env vars", async () => {
+      let capturedHeaders: Record<string, string> = {};
+      let capturedUrl = "";
+
+      globalThis.fetch = mock.fn(async (url: string | URL | Request, init?: RequestInit) => {
+        capturedUrl = typeof url === "string" ? url : url.toString();
+        capturedHeaders = { ...(init?.headers as Record<string, string>) };
+        return fakeResponse({ status: 200, body: JSON.stringify({ ok: true }) });
+      }) as typeof fetch;
+
+      const optsClient = new ApiClient({
+        apiKey: "explicit-key-123",
+        baseUrl: "https://custom.api.test",
+      });
+      await optsClient.post("/resolve/company", {});
+
+      assert.ok(capturedHeaders["Authorization"] === "Bearer explicit-key-123");
+      assert.ok(capturedUrl.startsWith("https://custom.api.test/"));
+    });
+
+    it("uses explicit apiKey and falls back to env for baseUrl", () => {
+      process.env.ANCHORD_API_BASE_URL = "https://env-base.test";
+      const optsClient = new ApiClient({ apiKey: "explicit-key" });
+
+      globalThis.fetch = mock.fn(async (url: string | URL | Request) => {
+        const u = typeof url === "string" ? url : url.toString();
+        assert.ok(u.startsWith("https://env-base.test/"));
+        return fakeResponse({ status: 200, body: JSON.stringify({}) });
+      }) as typeof fetch;
+
+      assert.ok(optsClient);
+    });
+
+    it("throws when neither opts.apiKey nor env var is set", () => {
+      delete process.env.ANCHORD_API_KEY;
+      assert.throws(
+        () => new ApiClient({ baseUrl: "https://example.com" }),
+        (err: unknown) => {
+          assert.ok(err instanceof Error);
+          assert.ok(err.message.includes("ANCHORD_API_KEY"));
+          return true;
+        },
+      );
+    });
+
+    it("does not leak explicit apiKey in error messages", async () => {
+      globalThis.fetch = mock.fn(async () =>
+        fakeResponse({ status: 500, body: "Internal Server Error" }),
+      ) as typeof fetch;
+
+      const optsClient = new ApiClient({ apiKey: "secret-explicit-key-xyz" });
+
+      await assert.rejects(
+        () => optsClient.post("/resolve/company", {}),
+        (err: unknown) => {
+          assert.ok(err instanceof ApiError);
+          assert.ok(
+            !err.message.includes("secret-explicit-key-xyz"),
+            "error message must not contain the explicit API key",
+          );
+          return true;
+        },
+      );
+    });
+
+    it("preserves structured error chain with explicit opts", async () => {
+      const responseBody = {
+        error: {
+          code: "ENTITY_NOT_FOUND",
+          message: "Entity does not exist.",
+          details: { entity_id: "missing-uuid" },
+        },
+        request_id: "req_OPTS_TEST",
+      };
+
+      globalThis.fetch = mock.fn(async () =>
+        fakeResponse({
+          status: 404,
+          body: JSON.stringify(responseBody),
+          headers: { "x-request-id": "req_OPTS_TEST" },
+        }),
+      ) as typeof fetch;
+
+      const optsClient = new ApiClient({
+        apiKey: "opts-test-key",
+        baseUrl: "https://opts.api.test",
+      });
+
+      await assert.rejects(
+        () => optsClient.get("/entities/missing-uuid"),
+        (err: unknown) => {
+          assert.ok(err instanceof ApiError);
+          assert.equal(err.status_code, 404);
+          assert.equal(err.request_id, "req_OPTS_TEST");
+          assert.deepEqual(err.details, { entity_id: "missing-uuid" });
+          assert.ok(err.message.includes("ENTITY_NOT_FOUND"));
+          return true;
+        },
+      );
+    });
+  });
+
   // ── URL path correctness (colon routes, no encoding) ────────────
 
   describe("URL path mapping", () => {

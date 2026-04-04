@@ -5,6 +5,16 @@ All notable changes to `@anchord/mcp-server` will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.1.0] - 2026-04-04
+
+### Added
+
+- Hosted remote MCP endpoint at `https://mcp.anchord.ai/mcp` — zero-install access for any MCP client.
+- Per-request Bearer token authentication for remote mode.
+- Structured JSON error responses (401, 405, 413, 415, 400, 500).
+- Health check endpoint at `/health`.
+- `remotes` section in `server.json` for MCP registry discovery.
+
 ## [1.0.0] - 2026-04-03
 
 ### Added

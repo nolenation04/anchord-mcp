@@ -35,11 +35,30 @@ ANCHORD_API_KEY=your-key npx -y @anchord/mcp-server
 
 That's it. The server starts over stdio and is ready for MCP clients.
 
+### 3. Or connect to the hosted remote (zero install)
+
+No local install needed. Point any MCP client at the hosted endpoint:
+
+```json
+{
+  "mcpServers": {
+    "anchord": {
+      "url": "https://mcp.anchord.ai/mcp",
+      "headers": {
+        "Authorization": "Bearer your-api-key"
+      }
+    }
+  }
+}
+```
+
+See [docs/remote.md](docs/remote.md) for full details.
+
 ---
 
 ## MCP client setup
 
-### Cursor
+### Cursor (local stdio)
 
 Add to `.cursor/mcp.json` (workspace) or `~/.cursor/mcp.json` (global):
 
@@ -82,6 +101,25 @@ Add to your Claude Desktop config
 ```
 
 See [examples/claude-desktop-config.json](examples/claude-desktop-config.json).
+
+### Cursor / Claude Desktop (hosted remote)
+
+For zero-install remote access, use the hosted endpoint instead:
+
+```json
+{
+  "mcpServers": {
+    "anchord": {
+      "url": "https://mcp.anchord.ai/mcp",
+      "headers": {
+        "Authorization": "Bearer your-api-key"
+      }
+    }
+  }
+}
+```
+
+No Node.js, no npx, no Docker required. See [docs/remote.md](docs/remote.md).
 
 ### Docker
 

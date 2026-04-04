@@ -54,11 +54,25 @@ API keys are never included in error messages, logs, or MCP tool responses.
 When rate limited, the API returns HTTP 429. The MCP tool response will
 include the `request_id` for troubleshooting.
 
+## Hosted remote auth
+
+When using the hosted remote MCP server (`https://mcp.anchord.ai/mcp`),
+pass your API key as a Bearer token in the HTTP `Authorization` header
+instead of an environment variable:
+
+```
+Authorization: Bearer your-api-key
+```
+
+The hosted server is stateless — each request brings its own auth. No
+API keys are stored on the server. See [remote.md](remote.md) for full
+connection details.
+
 ## Environments
 
-| Environment | API URL | App URL |
-|-------------|---------|---------|
-| Production | `https://api.anchord.ai` | `https://app.anchord.ai` |
-| Staging | `https://staging.api.anchord.ai` | `https://staging.app.anchord.ai` |
+| Environment | API URL | MCP URL | App URL |
+|-------------|---------|---------|---------|
+| Production | `https://api.anchord.ai` | `https://mcp.anchord.ai/mcp` | `https://app.anchord.ai` |
+| Staging | `https://staging.api.anchord.ai` | `https://mcp.staging.anchord.ai/mcp` | `https://staging.app.anchord.ai` |
 
 Staging data may be reset at any time. Use production for real workloads.
