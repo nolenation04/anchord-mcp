@@ -3,12 +3,12 @@
   "name": "io.github.nolenation04/anchord",
   "title": "Anchord (AnchorID)",
   "description": "Identity resolution and pre-write safety checks for AI agents. Resolve companies and people to canonical AnchorIDs, run guard checks before writing, and export golden records. Read-only — never writes to external systems.",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "packages": [
     {
       "registryType": "npm",
       "identifier": "@anchord/mcp-server",
-      "version": "1.0.0",
+      "version": "1.1.0",
       "transport": {
         "type": "stdio"
       },

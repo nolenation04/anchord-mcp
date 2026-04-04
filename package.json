@@ -1,6 +1,6 @@
 {
   "name": "@anchord/mcp-server",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "description": "MCP server for Anchord — identity resolution and pre-write safety checks for AI agents. Read-only. Backed by the hosted Anchord API.",
   "type": "module",
   "main": "dist/index.js",

@@ -30,14 +30,15 @@ create an API key in **Settings > API Keys**.
 ### 2. Run with npx (no install)
 
 ```bash
-ANCHORD_API_KEY=your-key npx -y @anchord/mcp-server
+ANCHORD_API_KEY=<YOUR_ANCHORD_API_KEY> npx -y @anchord/mcp-server
 ```
 
 That's it. The server starts over stdio and is ready for MCP clients.
 
 ### 3. Or connect to the hosted remote (zero install)
 
-No local install needed. Point any MCP client at the hosted endpoint:
+No local install needed. Point any MCP client that supports remote HTTP
+transport at the hosted endpoint:
 
 ```json
 {
@@ -45,14 +46,16 @@ No local install needed. Point any MCP client at the hosted endpoint:
     "anchord": {
       "url": "https://mcp.anchord.ai/mcp",
       "headers": {
-        "Authorization": "Bearer your-api-key"
+        "Authorization": "Bearer <YOUR_ANCHORD_API_KEY>"
       }
     }
   }
 }
 ```
 
-See [docs/remote.md](docs/remote.md) for full details.
+See [docs/remote.md](docs/remote.md) for full details, client
+compatibility notes, and a local fallback if your client does not yet
+support remote MCP.
 
 ---
 
@@ -69,8 +72,7 @@ Add to `.cursor/mcp.json` (workspace) or `~/.cursor/mcp.json` (global):
       "command": "npx",
       "args": ["-y", "@anchord/mcp-server"],
       "env": {
-        "ANCHORD_API_KEY": "your-api-key",
-        "ANCHORD_API_BASE_URL": "https://api.anchord.ai"
+        "ANCHORD_API_KEY": "<YOUR_ANCHORD_API_KEY>"
       }
     }
   }
@@ -92,8 +94,7 @@ Add to your Claude Desktop config
       "command": "npx",
       "args": ["-y", "@anchord/mcp-server"],
       "env": {
-        "ANCHORD_API_KEY": "your-api-key",
-        "ANCHORD_API_BASE_URL": "https://api.anchord.ai"
+        "ANCHORD_API_KEY": "<YOUR_ANCHORD_API_KEY>"
       }
     }
   }
@@ -102,9 +103,11 @@ Add to your Claude Desktop config
 
 See [examples/claude-desktop-config.json](examples/claude-desktop-config.json).
 
-### Cursor / Claude Desktop (hosted remote)
+### Remote MCP (for clients that support HTTP transport)
 
-For zero-install remote access, use the hosted endpoint instead:
+For zero-install remote access, use the hosted endpoint instead of a
+local stdio process. This works with any MCP client that supports the
+`url` + `headers` configuration format:
 
 ```json
 {
@@ -112,21 +115,23 @@ For zero-install remote access, use the hosted endpoint instead:
     "anchord": {
       "url": "https://mcp.anchord.ai/mcp",
       "headers": {
-        "Authorization": "Bearer your-api-key"
+        "Authorization": "Bearer <YOUR_ANCHORD_API_KEY>"
       }
     }
   }
 }
 ```
 
-No Node.js, no npx, no Docker required. See [docs/remote.md](docs/remote.md).
+No Node.js, no npx, no Docker required. If your client does not yet
+support remote MCP, use the local stdio setup above.
+See [docs/remote.md](docs/remote.md) for full details.
 
 ### Docker
 
 ```bash
 docker build -t anchord-mcp .
 echo '{"jsonrpc":"2.0","id":1,"method":"initialize",...}' | \
-  docker run --rm -i -e ANCHORD_API_KEY=your-key anchord-mcp
+  docker run --rm -i -e ANCHORD_API_KEY=<YOUR_ANCHORD_API_KEY> anchord-mcp
 ```
 
 Or use the compose file for local testing:
@@ -248,6 +253,8 @@ with a structured payload:
 
 ## Architecture
 
+### Local (stdio)
+
 ```
 MCP Client (Cursor / Claude Desktop / etc.)
     │  stdio (JSON-RPC)
@@ -259,11 +266,33 @@ MCP Client (Cursor / Claude Desktop / etc.)
        │  HTTPS + Bearer auth
        ▼
 ┌──────────────┐
-│  Anchord API │  Hosted SaaS
-│              │  Scoring, matching, persistence,
-│              │  tenant isolation
+│  Anchord API │  Hosted SaaS — scoring, matching,
+│              │  persistence, tenant isolation
 └──────────────┘
 ```
+
+### Hosted remote (HTTP)
+
+```
+MCP Client
+    │  HTTPS POST + Bearer token
+    ▼
+┌────────────────────────┐
+│  mcp.anchord.ai        │  CloudFront (TLS, routing)
+└───────────┬────────────┘
+            ▼
+┌────────────────────────┐
+│  Lambda (stateless)    │  Per-request MCP server
+│  Bearer → ApiClient    │  No stored secrets
+└───────────┬────────────┘
+            │  HTTPS + Bearer auth
+            ▼
+┌────────────────────────┐
+│  Anchord API           │  Same hosted SaaS backend
+└────────────────────────┘
+```
+
+Both paths expose the same 11 MCP tools and connect to the same API.
 
 ---
 

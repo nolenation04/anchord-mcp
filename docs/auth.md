@@ -60,8 +60,8 @@ When using the hosted remote MCP server (`https://mcp.anchord.ai/mcp`),
 pass your API key as a Bearer token in the HTTP `Authorization` header
 instead of an environment variable:
 
-```
-Authorization: Bearer your-api-key
+```http
+Authorization: Bearer <YOUR_ANCHORD_API_KEY>
 ```
 
 The hosted server is stateless — each request brings its own auth. No
