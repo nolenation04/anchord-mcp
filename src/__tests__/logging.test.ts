@@ -4,7 +4,7 @@ import { redactKey, logRequest } from "../logging.js";
 
 describe("redactKey", () => {
   it("redacts middle of long keys, showing first 4 and last 4", () => {
-    assert.equal(redactKey("sk_live_abc123xyz789"), "sk_l***z789");
+    assert.equal(redactKey("anch_key_abc123xyz789"), "anch***z789");
   });
 
   it("fully redacts keys of 8 characters or fewer", () => {

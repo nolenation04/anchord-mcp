@@ -42,7 +42,7 @@ describe("extractBearerToken", () => {
   });
 
   it("handles long realistic API keys", () => {
-    const key = "sk_live_51abc123def456ghi789jkl012mno345pqr678stu901vwx234yz";
+    const key = "anchord_test_longtokenvalue1234567890abcdefghijklmnopqrstuv";
     assert.equal(extractBearerToken(`Bearer ${key}`), key);
   });
 });
