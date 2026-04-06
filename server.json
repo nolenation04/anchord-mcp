@@ -2,7 +2,7 @@
   "$schema": "https://static.modelcontextprotocol.io/schemas/2025-12-11/server.schema.json",
   "name": "io.github.nolenation04/anchord",
   "title": "Anchord (AnchorID)",
-  "description": "Identity resolution and pre-write safety checks for AI agents. Resolve companies and people to canonical AnchorIDs, run guard checks before writing, and export golden records. Read-only — never writes to external systems.",
+  "description": "Read-only MCP for identity resolution and write guardrails.",
   "version": "1.1.1",
   "packages": [
     {
