@@ -12,7 +12,7 @@
  */
 import { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
 import { z } from "zod";
-import { ApiClient, ApiClientOpts, ApiError } from "./api-client.js";
+import { ApiClient, ApiError } from "./api-client.js";
 
 /** Format the API response as MCP tool content. */
 function jsonContent(data: unknown) {

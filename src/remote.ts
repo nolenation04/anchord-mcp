@@ -17,6 +17,7 @@ import { ApiClient } from "./api-client.js";
 import { registerTools } from "./tools.js";
 import { extractBearerToken } from "./auth.js";
 import { logRequest } from "./logging.js";
+import { VERSION } from "./version.js";
 
 const MAX_BODY_SIZE = 1_048_576; // 1 MB
 
@@ -94,8 +95,8 @@ export function createServer(): http.Server {
     }
 
     // ── Request validation ────────────────────────────────────────────
-    const contentType = req.headers["content-type"] ?? "";
-    if (!contentType.includes("application/json")) {
+    const contentType = (req.headers["content-type"] ?? "").split(";")[0].trim();
+    if (contentType !== "application/json") {
       sendJson(res, 415, {
         error: {
           code: "UNSUPPORTED_MEDIA_TYPE",
@@ -129,7 +130,7 @@ export function createServer(): http.Server {
     let transport: StreamableHTTPServerTransport | undefined;
     try {
       const apiClient = new ApiClient({ apiKey: token, baseUrl: API_BASE_URL });
-      mcpServer = new McpServer({ name: "anchord", version: "1.0.0" });
+      mcpServer = new McpServer({ name: "anchord", version: VERSION });
       registerTools(mcpServer, apiClient);
 
       transport = new StreamableHTTPServerTransport({ sessionIdGenerator: undefined });

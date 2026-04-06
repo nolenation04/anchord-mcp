@@ -147,6 +147,21 @@ describe("remote server", () => {
     assert.equal(res.status, 405);
   });
 
+  it("returns 413 when body exceeds 1 MB", async () => {
+    server = createServer();
+    await new Promise<void>((r) => server.listen(0, r));
+
+    const largeBody = "x".repeat(1_048_577);
+    const res = await request(server, {
+      method: "POST",
+      path: "/mcp",
+      headers: { authorization: "Bearer test-key", "content-type": "application/json" },
+      body: largeBody,
+    });
+    assert.equal(res.status, 413);
+    assert.equal(JSON.parse(res.body).error.code, "BODY_TOO_LARGE");
+  });
+
   it("acknowledges DELETE /mcp for session cleanup", async () => {
     server = createServer();
     await new Promise<void>((r) => server.listen(0, r));
